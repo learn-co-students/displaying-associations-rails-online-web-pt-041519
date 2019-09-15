@@ -1,10 +1,11 @@
 class CategoriesController < ApplicationController
+  before_action :get_category, only: [:show, :edit, :update]
+
   def index
     @categories = Category.all
   end
 
   def show
-    @category = Category.find(params[:id])
   end
 
   def new
@@ -12,17 +13,26 @@ class CategoriesController < ApplicationController
   end
 
   def create
-    category = Category.create(params[:category])
-    redirect_to category_path(category)
+    @category = Category.create(category_params(:name))
+    redirect_to category_path(@category)
   end
 
   def edit
-    @category = Category.find(params[:id])
   end
 
   def update
-    category = Category.find(params[:id])
-    category.update(params.require(:category))
-    redirect_to category_path(category)
+    @category.update(category_params(:name))
+    redirect_to category_path(@category)
   end
+
+  private
+
+  def get_category
+    @category = Category.find(params[:id])
+  end
+
+  def category_params(*args)
+    params.require(:category).permit(*args)
+  end
+
 end
